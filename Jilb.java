@@ -81,6 +81,5 @@ public class Jilb {
         connectors = new Stack<>();
         maxNesting = currentNesting = -1;
         visit(graph.root);
-        System.out.println(operators() + "\n" + branching() + "\n" + nesting());
     }
 }
