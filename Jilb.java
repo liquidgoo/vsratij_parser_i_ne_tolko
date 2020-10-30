@@ -1,37 +1,51 @@
 import java.util.HashSet;
+import java.util.Stack;
 
 public class Jilb {
-    private HashSet<Node> nodes;
+    private HashSet<Node> visited;
+    private Stack<Node> connectors;
+
     private int maxNesting;
     private int currentNesting;
 
     private void visit(Node node) {
 
-        for (Node prev : node.prev) {
-            if (nodes.contains(prev)) {
+        visited.add(node);
+        if (node.inBranches < 1) {
+            if (node.next.size() == 2 && !node.doWhile && !node.cycle) {
+                currentNesting++;
+                updateMax();
+                if (!visited.contains(node.next.get(0)))
+                    visit(node.next.get(0));
+                else node.next.get(0).inBranches--;
+                Node connector = connectors.pop();
+                connector.inBranches++;
+                connectors.push(connector);
+                if (!visited.contains(node.next.get(1)))
+                    visit(node.next.get(1));
+                else node.next.get(1).inBranches--;
                 currentNesting--;
+                connector = connectors.pop();
+                visit(connector);
+            } else if (node.doWhile ^ node.cycle) {
+                currentNesting++;
+                updateMax();
+                if (!visited.contains(node.next.get(0)))
+                    visit(node.next.get(0));
+                else node.next.get(0).inBranches--;
+            } else if (node.next.size() > 0)
+                if (!visited.contains(node.next.get(0)))
+                    visit(node.next.get(0));
+                else node.next.get(0).inBranches--;
+            if (node.cycle) {
+                currentNesting--;
+                if (!visited.contains(node.next.get(1)))
+                    visit(node.next.get(1));
+                else node.next.get(1).inBranches--;
             }
-        }
-        currentNesting++;
-        updateMax();
-
-        nodes.add(node);
-
-        if ((node.next.size() == 2 && !node.cycle && !node.doWhile) || node.cycle ^ node.doWhile) {
-            currentNesting++;
-            updateMax();
-        }
-
-        if (node.next.size() > 0 && !nodes.contains(node.next.get(0)))
-            visit(node.next.get(0));
-
-        if (node.cycle) {
-            currentNesting--;
-            updateMax();
-        }
-
-        if (node.next.size() > 1 && !nodes.contains(node.next.get(1))) {
-            visit(node.next.get(1));
+        } else {
+            node.inBranches--;
+            connectors.push(node);
         }
     }
 
@@ -43,12 +57,12 @@ public class Jilb {
     }
 
     public int operators() {
-        return nodes.size() - 2;
+        return visited.size() - 2;
     }
 
     public int branching() {
         int i = 0;
-        for (Node node : nodes) {
+        for (Node node : visited) {
             if (node.next.size() > 1) i++;
         }
         return i;
@@ -63,8 +77,10 @@ public class Jilb {
     }
 
     public Jilb(Graph graph) {
-        nodes = new HashSet<>();
-        maxNesting = currentNesting = -2;
+        visited = new HashSet<>();
+        connectors = new Stack<>();
+        maxNesting = currentNesting = -1;
         visit(graph.root);
+        System.out.println(operators() + "\n" + branching() + "\n" + nesting());
     }
 }

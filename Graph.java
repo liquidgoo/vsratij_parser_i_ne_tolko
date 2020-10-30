@@ -69,6 +69,7 @@ public class Graph {
         }
         ArrayList<Node> prevs = prevsStack.pop();
         forNode.prev.addAll(prevs);
+        forNode.inBranches += prevs.size() - 1;
         for (Node prev : prevs) {
             prev.next.add(forNode);
         }
@@ -303,6 +304,7 @@ class Node {
     boolean cycle;
     boolean doWhile;
     int complexity;
+    int inBranches;
 
     Node(ArrayList<Node> prevs, String token) {
         this.token = token;
@@ -310,6 +312,7 @@ class Node {
         this.prev = new ArrayList<>();
         this.prev.addAll(prevs);
         complexity = 1;
+        inBranches = prevs.size() - 1;
     }
 
 
@@ -318,6 +321,7 @@ class Node {
         next = new ArrayList<>();
         this.prev = new ArrayList<>();
         complexity = 1;
+        inBranches = 0;
     }
 
 }

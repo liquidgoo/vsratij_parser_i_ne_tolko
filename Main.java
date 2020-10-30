@@ -5,15 +5,19 @@ public class Main {
     public static void main(String[] args) {
         String prog =
                 """
-                        if(abc) {for(:) println(kto); if(sas);}
+                        if(abc) {for(:) println(kto); if(sas) do {raz; dva;} while(chtoto);} // ;if(){}
                         else { while(eshe chtoto) {chiki-briki} switch(a) {
                         case 1:
                         nu
+                        /*
+                        tipa ;
+                        coment
+                        */
                         kak
                         tam
                         break;
                         case 2:
-                        s dengami
+                        s dengami " tipa literal ;for(){}"
                         break;
                         default:
                         ti komu
@@ -22,6 +26,7 @@ public class Main {
                         }}
                         v pechat(finalochka)
                         """;
+        prog = prog.replaceAll("(?s:/\\*.*?\\*/)|//.*", "").replaceAll("\"(?:\\\\\"|[^\"])*?\"", "a");
         prog = prog.replaceAll("[ ]*\\n[ ]*", "\n");
 
         int j = prog.indexOf("(");
