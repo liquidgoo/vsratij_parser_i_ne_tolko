@@ -27,7 +27,6 @@ public class MGZ {
         while (!branching.empty()) {
             Node node = branching.pop();
             node.complexity = count(node);
-            System.out.println(node.complexity);
         }
     }
 
@@ -82,6 +81,5 @@ public class MGZ {
         nodes = new HashSet<>();
         findBranching(graph.root);
         countAll();
-        System.out.println(absoluteComplexity());
     }
 }
