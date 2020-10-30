@@ -5,12 +5,8 @@ public class Main {
     public static void main(String[] args) {
         String prog =
                 """
-                        if(abc) {for(:) println(kto); if(sas) 
-                        do {
-                        println(raz);
-                        println(dva)
-                        } while(chtoto)
-                        } else { while(eshe chtoto) {chiki-briki} switch(a) {
+                        if(abc) {for(:) println(kto); if(sas);}
+                        else { while(eshe chtoto) {chiki-briki} switch(a) {
                         case 1:
                         nu
                         kak
@@ -18,6 +14,7 @@ public class Main {
                         break;
                         case 2:
                         s dengami
+                        break;
                         default:
                         ti komu
                         zvonish

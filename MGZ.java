@@ -5,6 +5,7 @@ public class MGZ {
     Stack<Node> branching;
     HashSet<Node> nodes;
 
+
     private void findBranching(Node node) {
         if (node.next.size() == 2) {
             branching.push(node);
@@ -26,6 +27,7 @@ public class MGZ {
         while (!branching.empty()) {
             Node node = branching.pop();
             node.complexity = count(node);
+            System.out.println(node.complexity);
         }
     }
 
@@ -38,7 +40,7 @@ public class MGZ {
                 return 1;
             } else {
                 nodes.add(node);
-                return visit(node.next.get(0), 1, nodes) + node.next.get(1).complexity;
+                return visit(node.next.get(0), 1, nodes) + 1;
             }
         }
     }
@@ -52,15 +54,15 @@ public class MGZ {
                 if (node.next.size() == 2) {
                     if (!node.cycle) {
                         branches++;
-                        return visit(node.next.get(0), branches, nodes) + visit(node.next.get(0), branches, nodes) + 1;
+                        return visit(node.next.get(0), branches, nodes) + visit(node.next.get(1), branches, nodes) + 1;
                     } else {
-                        return visit(node.next.get(0), 1, nodes) + visit(node.next.get(0), 1, nodes) + 1;
+                        return visit(node.next.get(0), 1, nodes) + visit(node.next.get(1), 1, nodes) + 1;
                     }
                 } else if (node.next.size() == 1) {
                     return visit(node.next.get(0), branches, nodes) + 1;
                 } else return 0;
             } else return 1;
-        } else return 1;
+        } else return 0;
     }
 
     public int absoluteComplexity() {
@@ -80,5 +82,6 @@ public class MGZ {
         nodes = new HashSet<>();
         findBranching(graph.root);
         countAll();
+        System.out.println(absoluteComplexity());
     }
 }

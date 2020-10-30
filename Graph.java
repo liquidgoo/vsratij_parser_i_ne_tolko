@@ -219,8 +219,10 @@ public class Graph {
                 prevsStack.push(prevs);
             }
         }
+        while(!tokens.get(line).startsWith("}")) {
+            line++;
+        }
         line++;
-        if (tokens.get(line).equals("}")) line++;
     }
 
     private void manageBlock(boolean push) {
@@ -307,6 +309,7 @@ class Node {
         next = new ArrayList<>();
         this.prev = new ArrayList<>();
         this.prev.addAll(prevs);
+        complexity = 1;
     }
 
 
@@ -314,6 +317,7 @@ class Node {
         this.token = token;
         next = new ArrayList<>();
         this.prev = new ArrayList<>();
+        complexity = 1;
     }
 
 }
