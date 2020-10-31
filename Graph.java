@@ -69,7 +69,6 @@ public class Graph {
         }
         ArrayList<Node> prevs = prevsStack.pop();
         forNode.prev.addAll(prevs);
-        forNode.inBranches += prevs.size() - 1;
         for (Node prev : prevs) {
             prev.next.add(forNode);
         }
@@ -146,6 +145,10 @@ public class Graph {
             while (i < token.length() && token.charAt(i) == ' ') i++;
             manageToken(token.substring(i), true);
         }
+        ArrayList<Node> temp = prevsStack.pop(),
+                prevs = prevsStack.pop();
+        prevs.addAll(temp);
+        prevsStack.push(prevs);
     }
 
     private void manageSwitch(String token) {
@@ -220,7 +223,7 @@ public class Graph {
                 prevsStack.push(prevs);
             }
         }
-        while(!tokens.get(line).startsWith("}")) {
+        while (!tokens.get(line).startsWith("}")) {
             line++;
         }
         line++;
