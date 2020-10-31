@@ -8,25 +8,29 @@ public class Jilb {
     private int maxNesting;
     private int currentNesting;
 
-    private void visit(Node node) {
-
+    private boolean visit(Node node) {
+        boolean foundNext = true;
         visited.add(node);
         if (node.inBranches < 1) {
             if (node.next.size() == 2 && !node.doWhile && !node.cycle) {
                 currentNesting++;
                 updateMax();
-                if (!visited.contains(node.next.get(0)))
-                    visit(node.next.get(0));
-                else node.next.get(0).inBranches--;
-                Node connector = connectors.pop();
-                connector.inBranches++;
-                connectors.push(connector);
+                if (!visited.contains(node.next.get(0))) {
+                    foundNext = visit(node.next.get(0));
+                } else foundNext = false;
+                if (foundNext) {
+                    Node connector = connectors.pop();
+                    connector.inBranches++;
+                    connectors.push(connector);
+                }
                 if (!visited.contains(node.next.get(1)))
                     visit(node.next.get(1));
                 else node.next.get(1).inBranches--;
                 currentNesting--;
-                connector = connectors.pop();
-                visit(connector);
+                if (foundNext) {
+                    Node connector = connectors.pop();
+                    visit(connector);
+                }
             } else if (node.doWhile ^ node.cycle) {
                 currentNesting++;
                 updateMax();
@@ -44,9 +48,11 @@ public class Jilb {
                 else node.next.get(1).inBranches--;
             }
         } else {
+            foundNext = true;
             node.inBranches--;
             connectors.push(node);
         }
+        return foundNext;
     }
 
 
