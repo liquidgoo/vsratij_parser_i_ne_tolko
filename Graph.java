@@ -130,6 +130,7 @@ public class Graph {
     }
 
     private void manageElse(String token) {
+        Node ifNode = current;
         int i = token.indexOf(' ');
         if (i == -1) {
             line++;
@@ -145,20 +146,22 @@ public class Graph {
             while (i < token.length() && token.charAt(i) == ' ') i++;
             manageToken(token.substring(i), true);
         }
-        ArrayList<Node> temp = prevsStack.pop(),
-                prevs = prevsStack.pop();
-        prevs.addAll(temp);
-        prevsStack.push(prevs);
+        ArrayList<Node> prevs = prevsStack.pop();
+        ArrayList<Node> temp = prevsStack.pop();
+        temp.addAll(prevs);
+        prevsStack.push(temp);
     }
 
     private void manageSwitch(String token) {
         Node ifNode = current;
         line++;
         boolean fallInDefault = false;
+        boolean skippedPop = false;
         while (!token.startsWith("}") && !token.equals("default")) {
             if (token.startsWith("case ")) {
 
                 addOne(token);
+                current.isCase = true;
                 ifNode = current;
                 ArrayList<Node> prevs = new ArrayList<>();
                 prevs.add(current);
@@ -177,6 +180,7 @@ public class Graph {
                         prevs.add(ifNode);
                         prevsStack.push(prevs);
                         addOne(token);
+                        current.isCase = true;
                         ifNode = current;
                         temp.add(current);
                         prevsStack.push(temp);
@@ -189,10 +193,30 @@ public class Graph {
                         line++;
 
                     } else {
-                        boolean pop = tokens.get(line + 1).startsWith("break");
-                        manageToken(token, pop);
+                        int j = 1;
+                        if (tokens.get(line + 1).startsWith(";")) {
+                            j = 2;
+                        }
+                        boolean pop = tokens.get(line + j).startsWith("break");
+                        if (pop && !skippedPop) {
+                            pop = false;
+                            skippedPop = true;
+                        }
+                        manageToken(token, false);
+                        if (pop) {
+                            prevs = prevsStack.pop();
+                            ArrayList<Node> temp = prevsStack.pop();
+                            temp.addAll(prevs);
+                            prevsStack.push(temp);
+                        }
                     }
                     token = tokens.get(line);
+                }
+                if (current == ifNode) {
+                    prevs = prevsStack.pop();
+                    ArrayList<Node> temp = prevsStack.pop();
+                    temp.addAll(prevs);
+                    prevsStack.push(temp);
                 }
                 prevs = new ArrayList<>();
                 prevs.add(ifNode);
@@ -211,8 +235,22 @@ public class Graph {
                     token = tokens.get(line);
                     continue;
                 }
+                int j = 1;
+                if (tokens.get(line + 1).startsWith(";")) {
+                    j = 2;
+                }
                 boolean pop = tokens.get(line + 1).startsWith("break") || tokens.get(line + 1).startsWith("}");
-                manageToken(token, pop);
+                if (pop && !skippedPop) {
+                    pop = false;
+                    skippedPop = true;
+                }
+                manageToken(token, false);
+                if (pop) {
+                    ArrayList<Node> prevs = prevsStack.pop();
+                    ArrayList<Node> temp = prevsStack.pop();
+                    temp.addAll(prevs);
+                    prevsStack.push(temp);
+                }
                 token = tokens.get(line);
             }
         } else {
@@ -306,6 +344,7 @@ class Node {
     String token;
     boolean cycle;
     boolean doWhile;
+    boolean isCase;
     int complexity;
     int inBranches;
 

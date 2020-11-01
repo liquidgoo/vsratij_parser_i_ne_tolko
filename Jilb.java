@@ -11,13 +11,22 @@ public class Jilb {
     private boolean visit(Node node) {
         boolean foundNext = true;
         visited.add(node);
+
         if (node.inBranches < 1) {
             if (node.next.size() == 2 && !node.doWhile && !node.cycle) {
                 currentNesting++;
                 updateMax();
                 if (!visited.contains(node.next.get(0))) {
                     foundNext = visit(node.next.get(0));
-                } else foundNext = false;
+                } else {
+                    node.next.get(0).inBranches--;
+                    foundNext = false;
+                }
+//                if (!connectors.empty()) {
+//                    Node connector = connectors.pop();
+//                    if (node.next.get(0) == connector) connector.inBranches--;
+//                    connectors.push(connector);
+//                }
                 if (foundNext) {
                     Node connector = connectors.pop();
                     connector.inBranches++;

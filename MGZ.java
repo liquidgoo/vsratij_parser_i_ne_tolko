@@ -27,12 +27,12 @@ public class MGZ {
         while (!branching.empty()) {
             Node node = branching.pop();
             node.complexity = count(node);
-            System.out.println(node.complexity);
         }
     }
 
     private int count(Node node) {
         HashSet<Node> nodes = new HashSet<>();
+        nodes.add(node);
         if (!node.cycle) {
             return visit(node.next.get(0), node, 2, nodes) + visit(node.next.get(1), node, 2, nodes);
         } else {
@@ -53,10 +53,11 @@ public class MGZ {
             for (int i = 0; i < node.prev.indexOf(prev); i++) {
                 if (!nodes.contains(node.prev.get(i))) doNotCount++;
             }
-            if (node.prev.size() - 1 > node.prev.indexOf(prev) && !node.prev.get(node.prev.indexOf(prev)).cycle
-            && !node.prev.get(node.prev.indexOf(prev)).doWhile && node.prev.get(node.prev.indexOf(prev)).next.size()==2
-            && node.prev.get(node.prev.indexOf(prev)).next.indexOf(node) == 0) {
-                branches ++;
+            for (int i = node.prev.size() - 1; i >= 0; i--) {
+                if (node.prev.get(i).isCase && !nodes.contains(node.prev.get(i))) {
+                    branches++;
+                    break;
+                }
             }
             branches -= node.prev.size() - doNotCount - connecting;
             if (branches > 0) {
@@ -69,6 +70,7 @@ public class MGZ {
                         return visit(node.next.get(0), node, branches, nodes) + visit(node.next.get(1), node, branches, nodes) + 1;
                     }
                 } else if (node.next.size() == 1) {
+                    branches++;
                     return visit(node.next.get(0), node, branches, nodes) + 1;
                 } else return 1;
             } else return 1;
