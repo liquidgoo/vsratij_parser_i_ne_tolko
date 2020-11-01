@@ -212,11 +212,15 @@ public class Graph {
                     }
                     token = tokens.get(line);
                 }
-                if (current == ifNode && !skippedPop) {
-                    prevs = prevsStack.pop();
-                    ArrayList<Node> temp = prevsStack.pop();
-                    temp.addAll(prevs);
-                    prevsStack.push(temp);
+                if (current == ifNode) {
+                    if (!skippedPop) {
+                        skippedPop = true;
+                    } else {
+                        prevs = prevsStack.pop();
+                        ArrayList<Node> temp = prevsStack.pop();
+                        temp.addAll(prevs);
+                        prevsStack.push(temp);
+                    }
                 }
                 prevs = new ArrayList<>();
                 prevs.add(ifNode);
@@ -228,6 +232,7 @@ public class Graph {
         }
         if (token.equals("default")) {
             line += 2;
+
             token = tokens.get(line);
             while (!token.startsWith("break") && !token.startsWith("}")) {
                 if (token.equals("") || token.equals(";")) {
