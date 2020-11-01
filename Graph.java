@@ -212,7 +212,7 @@ public class Graph {
                     }
                     token = tokens.get(line);
                 }
-                if (current == ifNode) {
+                if (current == ifNode && !skippedPop) {
                     prevs = prevsStack.pop();
                     ArrayList<Node> temp = prevsStack.pop();
                     temp.addAll(prevs);
