@@ -5,30 +5,31 @@ public class Main {
     public static void main(String[] args) {
         String prog =
                 """
-if(abc) {for(:) println(kto); if(sas) do {raz; dva;} while(chtoto);} // ;if(){}
-else { while(eshe chtoto) {chiki-briki} switch(a) {
-case 1:
-nu
-/*
-tipa ;
-coment
-*/
-kak
-tam
+	int x = 1;
+	
+	switch(x){
+		case 1:
+			x++;
+			break;
+		case 2:
+			x++;
 break;
-case 2:
-s dengami " tipa literal ;for(){}"
+		case 3:
+			x++;
 break;
-default:
-ti komu
-zvonish
+		case 4:
+			while (x != 10) x++;
 break;
-}}
-v pechat(finalochka)
+		case 10:
+			x += 15;
+break;
+		case 25:
+			break;
+	}
+	
+	System.out.println(x);
 
-
-
-                                                                                                            """;
+                        """;
 
 
         Tokenizer tokenizer = new Tokenizer(prog);

@@ -27,6 +27,7 @@ public class MGZ {
         while (!branching.empty()) {
             Node node = branching.pop();
             node.complexity = count(node);
+            System.out.println(node.complexity);
         }
     }
 
@@ -48,9 +49,15 @@ public class MGZ {
     private int visit(Node node, Node prev, int branches, HashSet<Node> nodes) {
         if (!nodes.contains(node)) {
             nodes.add(node);
-            int connecting = (node.cycle ^ node.doWhile) ? 1 : 0;
+            boolean inCycle = false;
+            for (int i = node.prev.size() - 1; i > node.prev.size() - 1 - node.cycleBranches; i--) {
+                if (node.prev.get(i) == prev) {
+                    inCycle = true;
+                    break;
+                }
+            }
             int doNotCount = 0;
-            for (int i = 0; i < node.prev.indexOf(prev); i++) {
+            for (int i = node.prev.size() - node.cycleBranches; i < node.prev.indexOf(prev); i++) {
                 if (!nodes.contains(node.prev.get(i))) doNotCount++;
             }
             for (int i = node.prev.size() - 1; i >= 0; i--) {
@@ -59,7 +66,9 @@ public class MGZ {
                     break;
                 }
             }
-            branches -= node.prev.size() - doNotCount - connecting;
+            if (inCycle) doNotCount += node.prev.size() - node.cycleBranches;
+            else doNotCount += node.cycleBranches;
+            branches -= node.prev.size() - doNotCount;
             if (branches > 0) {
                 if (node.next.size() == 2) {
                     if (!node.cycle) {

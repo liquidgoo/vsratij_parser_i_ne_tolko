@@ -69,6 +69,7 @@ public class Graph {
         }
         ArrayList<Node> prevs = prevsStack.pop();
         forNode.prev.addAll(prevs);
+        forNode.cycleBranches+= prevs.size();
         for (Node prev : prevs) {
             prev.next.add(forNode);
         }
@@ -107,6 +108,7 @@ public class Graph {
 
         node = node.next.get(node.next.size() - 1);
         node.doWhile = true;
+        node.cycleBranches = 1;
         node.prev.add(current);
         current.next.add(node);
     }
@@ -193,16 +195,13 @@ public class Graph {
                         line++;
 
                     } else {
-                        int j = 1;
-                        if (tokens.get(line + 1).startsWith(";")) {
-                            j = 2;
-                        }
-                        boolean pop = tokens.get(line + j).startsWith("break");
+                        manageToken(token, false);
+                        while (tokens.get(line).startsWith(";")) line++;
+                        boolean pop = tokens.get(line).startsWith("break");
                         if (pop && !skippedPop) {
                             pop = false;
                             skippedPop = true;
                         }
-                        manageToken(token, false);
                         if (pop) {
                             prevs = prevsStack.pop();
                             ArrayList<Node> temp = prevsStack.pop();
@@ -232,7 +231,6 @@ public class Graph {
         }
         if (token.equals("default")) {
             line += 2;
-
             token = tokens.get(line);
             while (!token.startsWith("break") && !token.startsWith("}")) {
                 if (token.equals("") || token.equals(";")) {
@@ -240,18 +238,15 @@ public class Graph {
                     token = tokens.get(line);
                     continue;
                 }
-                int j = 1;
-                if (tokens.get(line + 1).startsWith(";")) {
-                    j = 2;
-                }
-                boolean pop = tokens.get(line + 1).startsWith("break") || tokens.get(line + 1).startsWith("}");
+                manageToken(token, false);
+                while (tokens.get(line).startsWith(";")) line++;
+                boolean pop = tokens.get(line).startsWith("break") || tokens.get(line).startsWith("}");
                 if (pop && !skippedPop) {
                     pop = false;
                     skippedPop = true;
                 }
-                manageToken(token, false);
                 if (pop) {
-                    ArrayList<Node> prevs = prevsStack.pop();
+                    ArrayList prevs = prevsStack.pop();
                     ArrayList<Node> temp = prevsStack.pop();
                     temp.addAll(prevs);
                     prevsStack.push(temp);
@@ -352,6 +347,7 @@ class Node {
     boolean isCase;
     int complexity;
     int inBranches;
+    int cycleBranches;
 
     Node(ArrayList<Node> prevs, String token) {
         this.token = token;
@@ -360,6 +356,7 @@ class Node {
         this.prev.addAll(prevs);
         complexity = 1;
         inBranches = prevs.size() - 1;
+        cycleBranches = 0;
     }
 
 
@@ -369,6 +366,7 @@ class Node {
         this.prev = new ArrayList<>();
         complexity = 1;
         inBranches = 0;
+        cycleBranches = 0;
     }
 
 }
